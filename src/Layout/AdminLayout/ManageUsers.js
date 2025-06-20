@@ -4,6 +4,7 @@ const ManageUsers = () => {
   const roles = ["Admin", "Owner", "Tenant", "Property Manager", "Maintenance Staff"];
   const [activeTab, setActiveTab] = useState("Admin");
   const [users, setUsers] = useState([]);
+  const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -55,6 +56,7 @@ const ManageUsers = () => {
         const createdUser = await res.json();
         setUsers((prev) => [...prev, createdUser]);
         setFormData({ name: "", email: "", phone: "", role: activeTab });
+        setShowModal(false);
       } else {
         alert("Error registering user");
       }
@@ -84,49 +86,75 @@ const ManageUsers = () => {
         ))}
       </div>
 
-      {/* Form */}
-      <div style={styles.formContainer}>
-        <h4>Register New User</h4>
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          value={formData.name}
-          onChange={handleChange}
-          style={styles.input}
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          style={styles.input}
-        />
-        <input
-          type="text"
-          name="phone"
-          placeholder="Phone Number"
-          value={formData.phone}
-          onChange={handleChange}
-          style={styles.input}
-        />
-        <select
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          style={styles.input}
-        >
-          {roles.map((role) => (
-            <option key={role} value={role}>
-              {role}
-            </option>
-          ))}
-        </select>
-        <button onClick={handleRegister} style={styles.registerButton}>
-          Register
-        </button>
-      </div>
+      {/* Register Button */}
+      <button
+        onClick={() => setShowModal(true)}
+        style={{
+          marginBottom: "20px",
+          backgroundColor: "#007bff",
+          color: "#fff",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer"
+        }}
+      >
+        + Register New {activeTab}
+      </button>
+
+      {/* Modal Popup Form */}
+      {showModal && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modal}>
+            <button
+              onClick={() => setShowModal(false)}
+              style={styles.closeButton}
+            >
+              &times;
+            </button>
+            <h4>Register New {activeTab}</h4>
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={handleChange}
+              style={styles.input}
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              style={styles.input}
+            />
+            <input
+              type="text"
+              name="phone"
+              placeholder="Phone Number"
+              value={formData.phone}
+              onChange={handleChange}
+              style={styles.input}
+            />
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              style={styles.input}
+            >
+              {roles.map((role) => (
+                <option key={role} value={role}>
+                  {role}
+                </option>
+              ))}
+            </select>
+            <button onClick={handleRegister} style={styles.registerButton}>
+              Register
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Table */}
       {users.length > 0 ? (
@@ -182,17 +210,9 @@ const styles = {
     fontWeight: "bold",
     transition: "all 0.3s"
   },
-  formContainer: {
-    backgroundColor: "#f5f5f5",
-    padding: "20px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    marginBottom: "30px"
-  },
   input: {
     display: "block",
     width: "100%",
-    maxWidth: "500px",
     marginBottom: "12px",
     padding: "10px",
     fontSize: "16px",
@@ -225,6 +245,36 @@ const styles = {
   noData: {
     color: "#999",
     fontStyle: "italic"
+  },
+  modalOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999
+  },
+  modal: {
+    backgroundColor: "#fff",
+    padding: "30px",
+    borderRadius: "10px",
+    width: "400px",
+    position: "relative",
+    boxShadow: "0 5px 15px rgba(0,0,0,0.3)"
+  },
+  closeButton: {
+    position: "absolute",
+    top: "10px",
+    right: "15px",
+    background: "transparent",
+    border: "none",
+    fontSize: "20px",
+    fontWeight: "bold",
+    cursor: "pointer"
   }
 };
 

@@ -12,20 +12,32 @@ const Header = () => {
   };
 
   return (
-    <header className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', alignItems: 'center' }}>
-      <div className="logo" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>SSHOUSING</div>
+    <header
+      className="dashboard-header"
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        padding: "10px",
+        alignItems: "center",
+        backgroundColor: "#1f2d3d",
+        color: "#fff",
+      }}
+    >
+      <div className="logo" style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+        SSHOUSING
+      </div>
 
-      <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div className="header-right" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         <FaUserCircle className="icon user-icon" size={24} />
         <span className="username">
-          {user ? `${user.username} (${role})` : 'Guest'}
+          {user?.name ? `${user.name} (${role})` : `Guest (${role || "No Role"})`}
         </span>
         <button
           onClick={handleLogout}
           aria-label="Logout"
           title="Logout"
           className="icon-button"
-          style={{ background: "none", border: "none", cursor: "pointer" }}
+          style={{ background: "none", border: "none", cursor: "pointer", color: "#fff" }}
         >
           <FaSignOutAlt className="icon" size={20} />
         </button>
@@ -35,4 +47,3 @@ const Header = () => {
 };
 
 export default Header;
-

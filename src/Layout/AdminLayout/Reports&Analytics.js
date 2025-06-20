@@ -17,7 +17,7 @@ const revenueData = [
 ];
 
 const occupancyData = [
-  { name: "Occupied", value: 75 },
+  { name: "Occupied", value: 63 },
   { name: "Vacant", value: 25 },
 ];
 

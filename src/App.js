@@ -67,6 +67,9 @@ function App() {
             </AdminRoute>
           }
         >
+          {/* Redirect /admin to /admin/reportsandanalytics */}
+          <Route index element={<Navigate to="reportsandanalytics" replace />} />
+
           <Route path="country" element={<Country />} />
           <Route path="state" element={<State />} />
           <Route path="district" element={<District />} />
