@@ -1,33 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "../../App.css";
 
 const MessageBoard = () => {
-  const [messages, setMessages] = useState([
-    { id: 1, name: "Avijit", message: "Lift not working on 3rd floor." },
-    { id: 2, name: "Riya", message: "Please clean the parking area." },
-  ]);
-
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [userName, setUserName] = useState("");
+  const [error, setError] = useState("");
 
-  const handlePostMessage = (e) => {
+  // ✅ Fetch all messages on component mount
+  useEffect(() => {
+    fetchAllMessages();
+  }, []);
+
+  const fetchAllMessages = async () => {
+    try {
+      const res = await axios.get("https://localhost:7252/api/MessageBoard");
+      setMessages(res.data);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
+  };
+
+  const handlePostMessage = async (e) => {
     e.preventDefault();
-    if (userName.trim() && newMessage.trim()) {
+
+    if (!userName.trim() || !newMessage.trim()) {
+      setError("Please enter your name and message.");
+      return;
+    }
+
+    try {
       const newEntry = {
-        id: messages.length + 1,
-        name: userName,
-        message: newMessage,
+        username: userName.trim(),
+        content: newMessage.trim(),
       };
-      setMessages([newEntry, ...messages]);
+
+      await axios.post("https://localhost:7252/api/MessageBoard", newEntry);
+
       setNewMessage("");
       setUserName("");
+      setError("");
+      fetchAllMessages(); // Refresh messages
+    } catch (error) {
+      console.error("Error posting message:", error);
+      setError("Error posting message. Ensure you're a registered user.");
     }
   };
 
   return (
     <div className="page-container">
-      <h2>Message Board</h2>
-      <p>Share and read messages with other society members.</p>
+      <h2>📢 Society Message Board</h2>
+      <p>Share updates or issues with fellow residents.</p>
 
       <form className="message-form" onSubmit={handlePostMessage}>
         <input
@@ -38,24 +62,30 @@ const MessageBoard = () => {
         />
         <textarea
           placeholder="Write your message..."
+          rows={4}
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-        ></textarea>
+        />
         <button type="submit">Post Message</button>
+        {error && <p className="error-message">{error}</p>}
       </form>
 
       <div className="messages-section">
+        <h4>Recent Messages</h4>
         {messages.length > 0 ? (
           <ul className="message-list">
             {messages.map((msg) => (
               <li key={msg.id} className="message-card">
-                <strong>{msg.name}:</strong>
-                <p>{msg.message}</p>
+                <div className="message-header">
+                  <strong>{msg.username}</strong>
+                  <small>{new Date(msg.postedAt).toLocaleString()}</small>
+                </div>
+                <p>{msg.content}</p>
               </li>
             ))}
           </ul>
         ) : (
-          <p>No messages posted yet.</p>
+          <p>No messages yet.</p>
         )}
       </div>
     </div>
