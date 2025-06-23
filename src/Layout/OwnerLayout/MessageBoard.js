@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../../App.css";
+import useAuthStore from "../../Store/useAuthStore";
 
 const MessageBoard = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [userName, setUserName] = useState("");
   const [error, setError] = useState("");
+
+  const { user, role, clearAuth } = useAuthStore();
 
   // ✅ Fetch all messages on component mount
   useEffect(() => {
@@ -25,21 +27,20 @@ const MessageBoard = () => {
   const handlePostMessage = async (e) => {
     e.preventDefault();
 
-    if (!userName.trim() || !newMessage.trim()) {
-      setError("Please enter your name and message.");
+    if (!newMessage.trim()) {
+      setError("Please enter your message.");
       return;
     }
 
     try {
       const newEntry = {
-        username: userName.trim(),
+        username: user.name,
         content: newMessage.trim(),
       };
 
       await axios.post("https://localhost:7252/api/MessageBoard", newEntry);
 
       setNewMessage("");
-      setUserName("");
       setError("");
       fetchAllMessages(); // Refresh messages
     } catch (error) {
@@ -54,12 +55,6 @@ const MessageBoard = () => {
       <p>Share updates or issues with fellow residents.</p>
 
       <form className="message-form" onSubmit={handlePostMessage}>
-        <input
-          type="text"
-          placeholder="Your Name"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
-        />
         <textarea
           placeholder="Write your message..."
           rows={4}
